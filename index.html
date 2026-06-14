@@ -285,6 +285,114 @@
       border-top: 1px solid var(--border);
       margin: 40px 0;
     }
+
+    /* Tasks */
+    .tasks-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+
+    .tasks-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .task-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .task-row:last-child { border-bottom: none; }
+
+    .task-check {
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      border: 1.5px solid var(--muted);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .task-check:hover { border-color: var(--accent); }
+    .task-row.done .task-check { background: var(--accent); border-color: var(--accent); }
+    .task-check svg { display: none; }
+    .task-row.done .task-check svg { display: block; }
+
+    .task-name {
+      flex: 1;
+      font-size: 0.95rem;
+      color: var(--text);
+      transition: color 0.2s;
+    }
+
+    .task-row.done .task-name { color: var(--text-dim); text-decoration: line-through; }
+
+    .task-del {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.8rem;
+      padding: 2px 6px;
+      opacity: 0;
+      transition: opacity 0.15s, color 0.15s;
+    }
+
+    .task-row:hover .task-del { opacity: 1; }
+    .task-del:hover { color: #c08080; }
+
+    .task-input-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .task-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+    }
+
+    .task-input::placeholder { color: var(--muted); }
+
+    .task-add-btn {
+      background: none;
+      border: none;
+      color: var(--accent);
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      padding: 4px 8px;
+      transition: opacity 0.2s;
+    }
+
+    .task-add-btn:hover { opacity: 0.7; }
+
+    .no-tasks {
+      color: var(--text-dim);
+      font-size: 0.88rem;
+      font-style: italic;
+      padding: 8px 0;
+    }
   </style>
 </head>
 <body>
@@ -324,6 +432,19 @@
       <span class="habits-progress" id="habitsProgress"></span>
     </div>
     <div id="habitsList"></div>
+  </div>
+
+  <div class="section-label">today's tasks</div>
+  <div class="tasks-card">
+    <div class="tasks-header">
+      <span class="section-label" style="margin:0">to-do</span>
+      <span class="habits-progress" id="tasksProgress"></span>
+    </div>
+    <div id="tasksList"></div>
+    <div class="task-input-row">
+      <input class="task-input" id="taskInput" placeholder="add a task…" maxlength="80">
+      <button class="task-add-btn" id="taskAddBtn">+ add</button>
+    </div>
   </div>
 
   <div class="section-label">today's journal</div>
@@ -451,7 +572,70 @@ function renderJournal() {
   }
 }
 
+// Tasks
+function getTasks() { return JSON.parse(localStorage.getItem('tasks_' + TODAY) || '[]'); }
+function saveTasks(t) { localStorage.setItem('tasks_' + TODAY, JSON.stringify(t)); }
+
+function renderTasks() {
+  const tasks = getTasks();
+  const list = document.getElementById('tasksList');
+  const progress = document.getElementById('tasksProgress');
+  const done = tasks.filter(t => t.done).length;
+
+  progress.textContent = tasks.length ? `${done} / ${tasks.length}` : '';
+
+  if (!tasks.length) {
+    list.innerHTML = '<div class="no-tasks">Nothing yet — add a task below.</div>';
+    return;
+  }
+
+  list.innerHTML = tasks.map((t, i) => `
+    <div class="task-row ${t.done ? 'done' : ''}" data-i="${i}">
+      <div class="task-check" data-i="${i}">
+        <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
+          <path d="M1 4L4 7.5L10 1" stroke="#0c0c0c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="task-name">${t.text}</span>
+      <button class="task-del" data-i="${i}">✕</button>
+    </div>
+  `).join('');
+
+  list.querySelectorAll('.task-check').forEach(el => {
+    el.addEventListener('click', () => {
+      const tasks = getTasks();
+      tasks[el.dataset.i].done = !tasks[el.dataset.i].done;
+      saveTasks(tasks);
+      renderTasks();
+    });
+  });
+
+  list.querySelectorAll('.task-del').forEach(el => {
+    el.addEventListener('click', () => {
+      const tasks = getTasks();
+      tasks.splice(el.dataset.i, 1);
+      saveTasks(tasks);
+      renderTasks();
+    });
+  });
+}
+
+function addTask() {
+  const input = document.getElementById('taskInput');
+  const text = input.value.trim();
+  if (!text) return;
+  const tasks = getTasks();
+  tasks.push({ text, done: false });
+  saveTasks(tasks);
+  input.value = '';
+  renderTasks();
+}
+
+document.getElementById('taskAddBtn').addEventListener('click', addTask);
+document.getElementById('taskInput').addEventListener('keydown', e => { if (e.key === 'Enter') addTask(); });
+
 renderHabits();
+renderTasks();
 renderJournal();
 updateStats();
 </script>
