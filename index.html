@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Space</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0c0c0c;
+      --surface: #141414;
+      --border: #222;
+      --muted: #444;
+      --text-dim: #888;
+      --text: #ccc;
+      --text-bright: #eee;
+      --accent: #a8c5a0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 32px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 10;
+    }
+
+    .nav-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--text-bright);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .nav-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover, .nav-links a.active { color: var(--text-bright); }
+
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    .date-line {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+
+    .greeting {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: var(--text-bright);
+      margin-bottom: 48px;
+      font-weight: 400;
+    }
+
+    .section-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-dim);
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+
+    /* Habits */
+    .habits-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+
+    .habits-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .habits-progress {
+      font-size: 0.8rem;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .habit-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .habit-row:last-child { border-bottom: none; }
+
+    .habit-check {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1.5px solid var(--muted);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .habit-row.done .habit-check {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .habit-check svg { display: none; }
+    .habit-row.done .habit-check svg { display: block; }
+
+    .habit-name {
+      flex: 1;
+      font-size: 0.95rem;
+      color: var(--text);
+      transition: color 0.2s;
+    }
+
+    .habit-row.done .habit-name {
+      color: var(--text-dim);
+      text-decoration: line-through;
+    }
+
+    .habit-streak {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    .habit-row.done .habit-streak { color: var(--accent); }
+
+    .no-habits {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.88rem;
+      padding: 20px 0;
+    }
+
+    .no-habits a { color: var(--accent); text-decoration: none; }
+
+    /* Journal preview */
+    .journal-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+
+    .journal-today {
+      font-size: 0.9rem;
+      color: var(--text);
+      line-height: 1.8;
+      margin-bottom: 16px;
+      white-space: pre-wrap;
+    }
+
+    .journal-today.empty {
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn:hover { border-color: var(--muted); color: var(--text-bright); }
+    .btn-accent { border-color: var(--accent); color: var(--accent); }
+    .btn-accent:hover { background: var(--accent); color: #0c0c0c; }
+
+    /* Quick note */
+    .quick-note {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 32px;
+    }
+
+    .quick-note textarea {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.8;
+      resize: none;
+      min-height: 80px;
+    }
+
+    .quick-note textarea::placeholder { color: var(--muted); }
+
+    .quick-note-footer {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 12px;
+    }
+
+    /* Stats row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+
+    .stat-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: var(--text-bright);
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 4px;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 40px 0;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">my space</a>
+  <div class="nav-links">
+    <a href="index.html" class="active">home</a>
+    <a href="journal.html">journal</a>
+    <a href="habits.html">habits</a>
+  </div>
+</nav>
+
+<main>
+  <div class="date-line" id="dateDisplay"></div>
+  <h1 class="greeting" id="greeting"></h1>
+
+  <div class="stats-row">
+    <div class="stat-box">
+      <span class="stat-num" id="statEntries">—</span>
+      <div class="stat-label">journal entries</div>
+    </div>
+    <div class="stat-box">
+      <span class="stat-num" id="statHabitsToday">—</span>
+      <div class="stat-label">habits done today</div>
+    </div>
+    <div class="stat-box">
+      <span class="stat-num" id="statStreak">—</span>
+      <div class="stat-label">day streak</div>
+    </div>
+  </div>
+
+  <div class="section-label">today's habits</div>
+  <div class="habits-card">
+    <div class="habits-header">
+      <span class="section-label" style="margin:0">check-in</span>
+      <span class="habits-progress" id="habitsProgress"></span>
+    </div>
+    <div id="habitsList"></div>
+  </div>
+
+  <div class="section-label">today's journal</div>
+  <div class="journal-card">
+    <div class="journal-today" id="journalPreview"></div>
+    <a href="journal.html" class="btn btn-accent" id="journalBtn">write today's entry →</a>
+  </div>
+
+</main>
+
+<script>
+const TODAY = new Date().toISOString().split('T')[0];
+
+function getHabits() { return JSON.parse(localStorage.getItem('habits') || '[]'); }
+function getChecks() { return JSON.parse(localStorage.getItem('checks') || '{}'); }
+function saveChecks(c) { localStorage.setItem('checks', JSON.stringify(c)); }
+function getEntries() { return JSON.parse(localStorage.getItem('journalEntries') || '{}'); }
+
+// Date & greeting
+const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const now = new Date();
+const hour = now.getHours();
+const greetWord = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+
+document.getElementById('dateDisplay').textContent =
+  `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()} ${now.getFullYear()}`;
+document.getElementById('greeting').textContent = greetWord + '.';
+
+// Stats
+function updateStats() {
+  const entries = getEntries();
+  const habits = getHabits();
+  const checks = getChecks();
+  const todayChecks = checks[TODAY] || {};
+  const doneCnt = habits.filter(h => todayChecks[h.id]).length;
+
+  document.getElementById('statEntries').textContent = Object.keys(entries).length || 0;
+  document.getElementById('statHabitsToday').textContent =
+    habits.length ? `${doneCnt}/${habits.length}` : '—';
+
+  // Streak: consecutive days with at least one journal entry or all habits done
+  let streak = 0;
+  const d = new Date();
+  while (true) {
+    const key = d.toISOString().split('T')[0];
+    if (entries[key]) { streak++; d.setDate(d.getDate() - 1); }
+    else break;
+  }
+  document.getElementById('statStreak').textContent = streak || '0';
+}
+
+// Habits
+function renderHabits() {
+  const habits = getHabits();
+  const checks = getChecks();
+  const todayChecks = checks[TODAY] || {};
+  const list = document.getElementById('habitsList');
+  const progress = document.getElementById('habitsProgress');
+
+  if (!habits.length) {
+    list.innerHTML = `<div class="no-habits">No habits yet — <a href="habits.html">set them up</a></div>`;
+    progress.textContent = '';
+    return;
+  }
+
+  const done = habits.filter(h => todayChecks[h.id]).length;
+  progress.textContent = `${done} / ${habits.length}`;
+
+  list.innerHTML = habits.map(h => {
+    const checked = !!todayChecks[h.id];
+    const streak = getStreak(h.id);
+    return `<div class="habit-row ${checked ? 'done' : ''}" data-id="${h.id}">
+      <div class="habit-check">
+        <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
+          <path d="M1 4L4 7.5L10 1" stroke="#0c0c0c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="habit-name">${h.name}</span>
+      <span class="habit-streak">${streak > 0 ? streak + 'd' : ''}</span>
+    </div>`;
+  }).join('');
+
+  list.querySelectorAll('.habit-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const id = row.dataset.id;
+      const c = getChecks();
+      if (!c[TODAY]) c[TODAY] = {};
+      c[TODAY][id] = !c[TODAY][id];
+      saveChecks(c);
+      renderHabits();
+      updateStats();
+    });
+  });
+}
+
+function getStreak(habitId) {
+  const checks = getChecks();
+  let streak = 0;
+  const d = new Date();
+  // Don't count today (may not be done yet)
+  d.setDate(d.getDate() - 1);
+  while (true) {
+    const key = d.toISOString().split('T')[0];
+    if (checks[key]?.[habitId]) { streak++; d.setDate(d.getDate() - 1); }
+    else break;
+  }
+  return streak;
+}
+
+// Journal preview
+function renderJournal() {
+  const entries = getEntries();
+  const el = document.getElementById('journalPreview');
+  const btn = document.getElementById('journalBtn');
+  if (entries[TODAY]) {
+    const text = entries[TODAY];
+    el.textContent = text.length > 200 ? text.slice(0, 200) + '…' : text;
+    el.classList.remove('empty');
+    btn.textContent = 'edit today\'s entry →';
+  } else {
+    el.textContent = 'Nothing written yet today.';
+    el.classList.add('empty');
+    btn.textContent = 'write today\'s entry →';
+  }
+}
+
+renderHabits();
+renderJournal();
+updateStats();
+</script>
+</body>
+</html>

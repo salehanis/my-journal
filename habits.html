@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Habits — My Space</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0c0c0c;
+      --surface: #141414;
+      --border: #222;
+      --muted: #444;
+      --text-dim: #888;
+      --text: #ccc;
+      --text-bright: #eee;
+      --accent: #a8c5a0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 32px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 10;
+    }
+
+    .nav-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--text-bright);
+      text-decoration: none;
+    }
+
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text-bright); }
+
+    main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    .page-header {
+      margin-bottom: 40px;
+    }
+
+    .page-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: var(--text-bright);
+      font-weight: 400;
+    }
+
+    /* Week grid */
+    .week-strip {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+
+    .week-day {
+      flex: 1;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .week-day-label {
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+
+    .week-day-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      margin: 0 auto;
+      border: 1px solid transparent;
+      transition: all 0.15s;
+    }
+
+    .week-day.today .week-day-num {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .week-day.selected .week-day-num {
+      background: var(--accent);
+      color: #0c0c0c;
+    }
+
+    .week-day.has-data .week-day-label::after {
+      content: '·';
+      color: var(--accent);
+      margin-left: 2px;
+    }
+
+    /* Section */
+    .section-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-dim);
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+
+    /* Habit list */
+    .habits-section {
+      margin-bottom: 48px;
+    }
+
+    .habit-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .habit-row:first-child { border-top: 1px solid var(--border); }
+
+    .habit-check {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 1.5px solid var(--muted);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .habit-check:hover { border-color: var(--accent); }
+
+    .habit-row.done .habit-check {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .habit-check svg { display: none; }
+    .habit-row.done .habit-check svg { display: block; }
+
+    .habit-info { flex: 1; }
+
+    .habit-name {
+      font-size: 0.97rem;
+      color: var(--text);
+      transition: color 0.2s;
+    }
+
+    .habit-row.done .habit-name {
+      color: var(--text-dim);
+      text-decoration: line-through;
+    }
+
+    .habit-meta {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    .habit-streak { color: var(--accent); }
+
+    .habit-actions { display: flex; gap: 8px; opacity: 0; transition: opacity 0.15s; }
+    .habit-row:hover .habit-actions { opacity: 1; }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      padding: 4px;
+      font-size: 0.75rem;
+      transition: color 0.15s;
+    }
+
+    .icon-btn:hover { color: var(--text); }
+    .icon-btn.del:hover { color: #c08080; }
+
+    /* Add habit */
+    .add-section {
+      margin-bottom: 48px;
+    }
+
+    .add-form {
+      display: flex;
+      gap: 10px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.92rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus { border-color: var(--muted); }
+    input[type="text"]::placeholder { color: var(--muted); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn:hover { border-color: var(--muted); color: var(--text-bright); }
+    .btn-accent { border-color: var(--accent); color: var(--accent); }
+    .btn-accent:hover { background: var(--accent); color: #0c0c0c; }
+
+    /* Heatmap */
+    .heatmap-section { margin-bottom: 48px; }
+
+    .heatmap {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .heatmap-cell {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      transition: background 0.2s;
+    }
+
+    .heatmap-cell.low { background: #2a3d2a; border-color: #2a3d2a; }
+    .heatmap-cell.mid { background: #3d5c3a; border-color: #3d5c3a; }
+    .heatmap-cell.high { background: var(--accent); border-color: var(--accent); }
+
+    .heatmap-legend {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+    }
+
+    .legend-cell {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+    }
+
+    .empty-habits {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      padding: 20px 0;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">my space</a>
+  <div class="nav-links">
+    <a href="index.html">home</a>
+    <a href="journal.html">journal</a>
+    <a href="habits.html" class="active">habits</a>
+  </div>
+</nav>
+
+<main>
+  <div class="page-header">
+    <div class="page-label">daily habits</div>
+    <h1>Track your days.</h1>
+  </div>
+
+  <!-- Week strip -->
+  <div class="week-strip" id="weekStrip"></div>
+
+  <!-- Today's check-in -->
+  <div class="habits-section">
+    <div class="section-label" id="checkInLabel">today's check-in</div>
+    <div id="habitsList"></div>
+  </div>
+
+  <!-- Add habit -->
+  <div class="add-section">
+    <div class="section-label">add a habit</div>
+    <div class="add-form">
+      <input type="text" id="habitInput" placeholder="e.g. drink water, read 20 min, no phone before bed…" maxlength="60">
+      <button class="btn btn-accent" id="addBtn">add</button>
+    </div>
+  </div>
+
+  <!-- Heatmap -->
+  <div class="heatmap-section">
+    <div class="section-label">last 90 days</div>
+    <div class="heatmap" id="heatmap"></div>
+    <div class="heatmap-legend">
+      <span>less</span>
+      <div class="legend-cell" style="background:var(--surface);border:1px solid var(--border)"></div>
+      <div class="legend-cell" style="background:#2a3d2a"></div>
+      <div class="legend-cell" style="background:#3d5c3a"></div>
+      <div class="legend-cell" style="background:var(--accent)"></div>
+      <span>more</span>
+    </div>
+  </div>
+</main>
+
+<script>
+const TODAY = new Date().toISOString().split('T')[0];
+let selectedDate = TODAY;
+
+function getHabits() { return JSON.parse(localStorage.getItem('habits') || '[]'); }
+function saveHabits(h) { localStorage.setItem('habits', JSON.stringify(h)); }
+function getChecks() { return JSON.parse(localStorage.getItem('checks') || '{}'); }
+function saveChecks(c) { localStorage.setItem('checks', JSON.stringify(c)); }
+
+function dateStr(d) { return d.toISOString().split('T')[0]; }
+
+const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// Week strip
+function renderWeek() {
+  const strip = document.getElementById('weekStrip');
+  const checks = getChecks();
+  const habits = getHabits();
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    days.push(d);
+  }
+
+  strip.innerHTML = days.map(d => {
+    const key = dateStr(d);
+    const dayChecks = checks[key] || {};
+    const done = habits.filter(h => dayChecks[h.id]).length;
+    const hasData = done > 0;
+    const isToday = key === TODAY;
+    const isSelected = key === selectedDate;
+    return `<div class="week-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''} ${hasData ? 'has-data' : ''}" data-date="${key}">
+      <div class="week-day-label">${DAY_NAMES[d.getDay()]}</div>
+      <div class="week-day-num">${d.getDate()}</div>
+    </div>`;
+  }).join('');
+
+  strip.querySelectorAll('.week-day').forEach(el => {
+    el.addEventListener('click', () => {
+      selectedDate = el.dataset.date;
+      renderWeek();
+      renderHabits();
+    });
+  });
+}
+
+// Habits list
+function renderHabits() {
+  const habits = getHabits();
+  const checks = getChecks();
+  const dayChecks = checks[selectedDate] || {};
+  const list = document.getElementById('habitsList');
+  const isToday = selectedDate === TODAY;
+
+  // Update label
+  if (isToday) {
+    document.getElementById('checkInLabel').textContent = "today's check-in";
+  } else {
+    const d = new Date(selectedDate + 'T12:00:00');
+    document.getElementById('checkInLabel').textContent =
+      `${DAY_NAMES[d.getDay()]}, ${MONTHS[d.getMonth()]} ${d.getDate()}`;
+  }
+
+  if (!habits.length) {
+    list.innerHTML = '<div class="empty-habits">Add your first habit below to start tracking.</div>';
+    return;
+  }
+
+  list.innerHTML = habits.map(h => {
+    const done = !!dayChecks[h.id];
+    const streak = getStreak(h.id);
+    return `<div class="habit-row ${done ? 'done' : ''}" data-id="${h.id}">
+      <div class="habit-check" data-id="${h.id}">
+        <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
+          <path d="M1 4L4 7.5L10 1" stroke="#0c0c0c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="habit-info">
+        <div class="habit-name">${h.name}</div>
+        ${streak > 0 ? `<div class="habit-meta"><span class="habit-streak">${streak} day streak</span></div>` : ''}
+      </div>
+      <div class="habit-actions">
+        <button class="icon-btn del" data-del="${h.id}" title="remove habit">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  list.querySelectorAll('.habit-check').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = el.dataset.id;
+      const c = getChecks();
+      if (!c[selectedDate]) c[selectedDate] = {};
+      c[selectedDate][id] = !c[selectedDate][id];
+      saveChecks(c);
+      renderHabits();
+      renderWeek();
+      renderHeatmap();
+    });
+  });
+
+  list.querySelectorAll('[data-del]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = el.dataset.del;
+      if (!confirm('Remove this habit? Your past check-ins will be kept.')) return;
+      const habits = getHabits().filter(h => h.id !== id);
+      saveHabits(habits);
+      renderHabits();
+      renderWeek();
+      renderHeatmap();
+    });
+  });
+}
+
+function getStreak(habitId) {
+  const checks = getChecks();
+  let streak = 0;
+  const d = new Date();
+  // Count today if done
+  if (checks[TODAY]?.[habitId]) streak++;
+  d.setDate(d.getDate() - 1);
+  while (true) {
+    const key = dateStr(d);
+    if (checks[key]?.[habitId]) { streak++; d.setDate(d.getDate() - 1); }
+    else break;
+  }
+  return streak;
+}
+
+// Add habit
+document.getElementById('addBtn').addEventListener('click', addHabit);
+document.getElementById('habitInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addHabit();
+});
+
+function addHabit() {
+  const input = document.getElementById('habitInput');
+  const name = input.value.trim();
+  if (!name) return;
+  const habits = getHabits();
+  habits.push({ id: Date.now().toString(), name });
+  saveHabits(habits);
+  input.value = '';
+  renderHabits();
+  renderWeek();
+  renderHeatmap();
+}
+
+// Heatmap
+function renderHeatmap() {
+  const checks = getChecks();
+  const habits = getHabits();
+  const heatmap = document.getElementById('heatmap');
+  const cells = [];
+
+  for (let i = 89; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const key = dateStr(d);
+    const dayChecks = checks[key] || {};
+    const done = habits.filter(h => dayChecks[h.id]).length;
+    const ratio = habits.length ? done / habits.length : 0;
+    let cls = '';
+    if (ratio > 0 && ratio < 0.34) cls = 'low';
+    else if (ratio >= 0.34 && ratio < 0.67) cls = 'mid';
+    else if (ratio >= 0.67) cls = 'high';
+    cells.push(`<div class="heatmap-cell ${cls}" title="${key}: ${done}/${habits.length} habits"></div>`);
+  }
+
+  heatmap.innerHTML = cells.join('');
+}
+
+renderWeek();
+renderHabits();
+renderHeatmap();
+</script>
+</body>
+</html>

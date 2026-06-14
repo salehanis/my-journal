@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Journal — My Space</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0c0c0c;
+      --surface: #141414;
+      --border: #222;
+      --muted: #444;
+      --text-dim: #888;
+      --text: #ccc;
+      --text-bright: #eee;
+      --accent: #a8c5a0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 32px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 10;
+    }
+
+    .nav-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--text-bright);
+      text-decoration: none;
+    }
+
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text-bright); }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: calc(100vh - 65px);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      border-right: 1px solid var(--border);
+      padding: 28px 0;
+      overflow-y: auto;
+      position: sticky;
+      top: 65px;
+      height: calc(100vh - 65px);
+    }
+
+    .sidebar-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-dim);
+      padding: 0 20px;
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+
+    .entry-item {
+      padding: 12px 20px;
+      cursor: pointer;
+      border-left: 2px solid transparent;
+      transition: all 0.15s;
+    }
+
+    .entry-item:hover { background: var(--surface); }
+    .entry-item.active {
+      border-left-color: var(--accent);
+      background: var(--surface);
+    }
+
+    .entry-date {
+      font-size: 0.82rem;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .entry-preview {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-top: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .no-entries {
+      padding: 20px;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+
+    /* Editor */
+    .editor-area {
+      padding: 48px 56px 80px;
+      max-width: 700px;
+    }
+
+    .editor-date {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+    }
+
+    .editor-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      color: var(--text-bright);
+      margin-bottom: 32px;
+      font-weight: 400;
+      font-style: italic;
+    }
+
+    .word-count {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      margin-bottom: 16px;
+    }
+
+    textarea {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.97rem;
+      line-height: 2;
+      resize: none;
+      min-height: 60vh;
+    }
+
+    textarea::placeholder { color: var(--muted); }
+
+    .editor-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      margin-top: 24px;
+    }
+
+    .save-status {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+
+    .save-status.saved { color: var(--accent); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn:hover { border-color: var(--muted); color: var(--text-bright); }
+    .btn-danger { color: #c08080; border-color: #3a2020; }
+    .btn-danger:hover { background: #3a2020; color: #e0a0a0; }
+    .btn-accent { border-color: var(--accent); color: var(--accent); }
+    .btn-accent:hover { background: var(--accent); color: #0c0c0c; }
+
+    .new-entry-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      margin: 0 12px 20px;
+      border-radius: 8px;
+      border: 1px dashed var(--muted);
+      background: transparent;
+      color: var(--text-dim);
+      font-size: 0.82rem;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: calc(100% - 24px);
+    }
+
+    .new-entry-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .view-mode {
+      font-size: 0.97rem;
+      line-height: 2;
+      color: var(--text);
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 600px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .editor-area { padding: 32px 20px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">my space</a>
+  <div class="nav-links">
+    <a href="index.html">home</a>
+    <a href="journal.html" class="active">journal</a>
+    <a href="habits.html">habits</a>
+  </div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <button class="new-entry-btn" id="newEntryBtn">+ new entry</button>
+    <div class="sidebar-label">past entries</div>
+    <div id="entryList"></div>
+  </aside>
+
+  <div class="editor-area">
+    <div class="editor-date" id="editorDate"></div>
+    <div class="editor-title" id="editorTitle"></div>
+    <div class="word-count" id="wordCount"></div>
+    <textarea id="journalText" placeholder="Start writing…"></textarea>
+    <div class="editor-footer">
+      <span class="save-status" id="saveStatus"></span>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-danger" id="deleteBtn" style="display:none">delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const TODAY = new Date().toISOString().split('T')[0];
+let currentDate = TODAY;
+let saveTimer = null;
+
+const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function getEntries() { return JSON.parse(localStorage.getItem('journalEntries') || '{}'); }
+function saveEntries(e) { localStorage.setItem('journalEntries', JSON.stringify(e)); }
+
+function formatDate(iso) {
+  const d = new Date(iso + 'T12:00:00');
+  return `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+}
+
+function formatShort(iso) {
+  const d = new Date(iso + 'T12:00:00');
+  return `${months[d.getMonth()].slice(0,3)} ${d.getDate()}`;
+}
+
+function renderSidebar() {
+  const entries = getEntries();
+  const list = document.getElementById('entryList');
+  const keys = Object.keys(entries).sort((a, b) => b.localeCompare(a));
+
+  if (!keys.length) {
+    list.innerHTML = '<div class="no-entries">No past entries yet.</div>';
+    return;
+  }
+
+  list.innerHTML = keys.map(k => `
+    <div class="entry-item ${k === currentDate ? 'active' : ''}" data-date="${k}">
+      <div class="entry-date">${formatShort(k)}${k === TODAY ? ' · today' : ''}</div>
+      <div class="entry-preview">${entries[k].slice(0, 50) || '…'}</div>
+    </div>
+  `).join('');
+
+  list.querySelectorAll('.entry-item').forEach(el => {
+    el.addEventListener('click', () => loadEntry(el.dataset.date));
+  });
+}
+
+function loadEntry(date) {
+  currentDate = date;
+  const entries = getEntries();
+  const text = entries[date] || '';
+  const ta = document.getElementById('journalText');
+
+  document.getElementById('editorDate').textContent = formatDate(date);
+  document.getElementById('editorTitle').textContent =
+    date === TODAY ? 'What's on your mind today?' : 'Entry';
+  ta.value = text;
+  updateWordCount(text);
+  document.getElementById('saveStatus').textContent = '';
+  document.getElementById('saveStatus').className = 'save-status';
+  document.getElementById('deleteBtn').style.display = text ? 'inline-flex' : 'none';
+  ta.readOnly = false;
+
+  renderSidebar();
+  ta.focus();
+}
+
+function updateWordCount(text) {
+  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+  document.getElementById('wordCount').textContent = words ? `${words} word${words !== 1 ? 's' : ''}` : '';
+}
+
+// Auto-save
+document.getElementById('journalText').addEventListener('input', (e) => {
+  updateWordCount(e.target.value);
+  clearTimeout(saveTimer);
+  document.getElementById('saveStatus').textContent = 'saving…';
+  document.getElementById('saveStatus').className = 'save-status';
+  saveTimer = setTimeout(() => {
+    const entries = getEntries();
+    const val = e.target.value.trim();
+    if (val) {
+      entries[currentDate] = e.target.value;
+      document.getElementById('deleteBtn').style.display = 'inline-flex';
+    } else {
+      delete entries[currentDate];
+      document.getElementById('deleteBtn').style.display = 'none';
+    }
+    saveEntries(entries);
+    renderSidebar();
+    document.getElementById('saveStatus').textContent = 'saved';
+    document.getElementById('saveStatus').className = 'save-status saved';
+    setTimeout(() => {
+      if (document.getElementById('saveStatus').textContent === 'saved')
+        document.getElementById('saveStatus').textContent = '';
+    }, 2000);
+  }, 800);
+});
+
+document.getElementById('newEntryBtn').addEventListener('click', () => loadEntry(TODAY));
+
+document.getElementById('deleteBtn').addEventListener('click', () => {
+  if (!confirm('Delete this entry?')) return;
+  const entries = getEntries();
+  delete entries[currentDate];
+  saveEntries(entries);
+  renderSidebar();
+  loadEntry(TODAY);
+});
+
+// Init
+loadEntry(TODAY);
+</script>
+</body>
+</html>
