@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings — My Space</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    main { max-width: 560px; margin: 0 auto; padding: 44px 24px 80px; }
+
+    .page-header { margin-bottom: 40px; }
+    .page-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-dim); margin-bottom: 8px; }
+    h1 { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--text-bright); font-weight: 400; }
+
+    .settings-group { margin-bottom: 36px; }
+
+    .setting-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 0; border-bottom: 1px solid var(--border);
+      gap: 20px;
+    }
+
+    .setting-row:first-child { border-top: 1px solid var(--border); }
+
+    .setting-info { flex: 1; }
+    .setting-name { font-size: 0.93rem; color: var(--text-bright); font-weight: 500; }
+    .setting-desc { font-size: 0.78rem; color: var(--text-dim); margin-top: 3px; }
+
+    .setting-control { flex-shrink: 0; }
+
+    .name-input {
+      background: var(--surface) !important;
+      border: 1px solid var(--border) !important;
+      border-radius: 8px !important;
+      padding: 8px 12px !important;
+      width: 180px !important;
+      font-size: 0.88rem !important;
+    }
+
+    /* Color swatches */
+    .color-swatches { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .swatch {
+      width: 28px; height: 28px; border-radius: 50%;
+      cursor: pointer; border: 2px solid transparent;
+      transition: all 0.15s; flex-shrink: 0;
+    }
+
+    .swatch.selected { border-color: white; transform: scale(1.15); }
+
+    /* Stats */
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; }
+
+    .stat-item {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px;
+    }
+
+    .stat-num { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--text-bright); }
+    .stat-label { font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }
+
+    /* Danger zone */
+    .danger-zone { border: 1px solid var(--danger-dark); border-radius: var(--radius); padding: 20px; }
+    .danger-title { font-size: 0.78rem; color: var(--danger); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="nav-brand">my space</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="journal.html">Journal</a>
+    <a href="habits.html">Habits</a>
+    <a href="settings.html" class="active">Settings</a>
+  </div>
+</nav>
+
+<nav class="bottom-nav">
+  <a href="index.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Home
+  </a>
+  <a href="journal.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    Journal
+  </a>
+  <a href="habits.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+    Habits
+  </a>
+  <a href="settings.html" class="active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    Settings
+  </a>
+</nav>
+
+<main>
+  <div class="page-header fade-up">
+    <div class="page-label">settings</div>
+    <h1>Your space.</h1>
+  </div>
+
+  <div class="settings-group fade-up-2">
+    <div class="section-label">profile</div>
+
+    <div class="setting-row">
+      <div class="setting-info">
+        <div class="setting-name">Your name</div>
+        <div class="setting-desc">Shown in the greeting on the home page</div>
+      </div>
+      <div class="setting-control">
+        <input type="text" class="name-input" id="nameInput" placeholder="your name" maxlength="30">
+      </div>
+    </div>
+
+    <div class="setting-row">
+      <div class="setting-info">
+        <div class="setting-name">Accent color</div>
+        <div class="setting-desc">Theme color used throughout the app</div>
+      </div>
+      <div class="setting-control">
+        <div class="color-swatches" id="colorSwatches">
+          <div class="swatch" data-color="#a8c5a0" style="background:#a8c5a0" title="Sage"></div>
+          <div class="swatch" data-color="#89b4cc" style="background:#89b4cc" title="Blue"></div>
+          <div class="swatch" data-color="#c4a882" style="background:#c4a882" title="Warm"></div>
+          <div class="swatch" data-color="#b89ec8" style="background:#b89ec8" title="Lavender"></div>
+          <div class="swatch" data-color="#c4a4a4" style="background:#c4a4a4" title="Rose"></div>
+          <div class="swatch" data-color="#e8c96e" style="background:#e8c96e" title="Gold"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="settings-group fade-up-3">
+    <div class="section-label">your data</div>
+
+    <div class="stats-grid" id="statsGrid"></div>
+
+    <div class="setting-row">
+      <div class="setting-info">
+        <div class="setting-name">Export data</div>
+        <div class="setting-desc">Download all your entries, habits, and tasks as JSON</div>
+      </div>
+      <div class="setting-control">
+        <button class="btn" id="exportBtn">export</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="settings-group">
+    <div class="section-label">keyboard shortcuts</div>
+    <div class="card" style="font-size:0.88rem;line-height:2.2">
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 20px;align-items:center">
+        <kbd style="font-size:0.75rem;background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:2px 8px;font-family:inherit">/</kbd>
+        <span style="color:var(--text-dim)">Focus task input on dashboard</span>
+        <kbd style="font-size:0.75rem;background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:2px 8px;font-family:inherit">⌘ Enter</kbd>
+        <span style="color:var(--text-dim)">Save journal entry immediately</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="settings-group">
+    <div class="section-label">danger zone</div>
+    <div class="danger-zone">
+      <div class="danger-title">Permanent actions</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-danger" id="clearHabitsBtn">clear all habits</button>
+        <button class="btn btn-danger" id="clearAllBtn">clear all data</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="shared.js"></script>
+<script>
+const COLORS = ['#a8c5a0','#89b4cc','#c4a882','#b89ec8','#c4a4a4','#e8c96e'];
+let settings = getSettings();
+
+// Name
+const nameInput = document.getElementById('nameInput');
+nameInput.value = settings.name || '';
+nameInput.addEventListener('input', () => {
+  settings.name = nameInput.value.trim();
+  saveSettings();
+});
+
+// Colors
+function updateSwatches() {
+  document.querySelectorAll('.swatch').forEach(s => {
+    s.classList.toggle('selected', s.dataset.color === settings.accent);
+  });
+}
+
+document.getElementById('colorSwatches').querySelectorAll('.swatch').forEach(s => {
+  s.addEventListener('click', () => {
+    settings.accent = s.dataset.color;
+    saveSettings();
+    applyAccent();
+    updateSwatches();
+    toast('Color updated', 'success');
+  });
+});
+
+updateSwatches();
+
+function saveSettings() {
+  localStorage.setItem('settings', JSON.stringify(settings));
+}
+
+// Stats
+function renderStats() {
+  const entries = JSON.parse(localStorage.getItem('journalEntries') || '{}');
+  const habits = JSON.parse(localStorage.getItem('habits') || '[]');
+  const checks = JSON.parse(localStorage.getItem('checks') || '{}');
+
+  // Count total check-ins
+  let totalCheckins = 0;
+  Object.values(checks).forEach(day => { totalCheckins += Object.values(day).filter(Boolean).length; });
+
+  // Total words
+  let totalWords = 0;
+  Object.values(entries).forEach(e => {
+    const text = typeof e === 'object' ? (e.text || '') : (e || '');
+    if (text.trim()) totalWords += text.trim().split(/\s+/).length;
+  });
+
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-item"><div class="stat-num">${Object.keys(entries).length}</div><div class="stat-label">journal entries</div></div>
+    <div class="stat-item"><div class="stat-num">${totalWords.toLocaleString()}</div><div class="stat-label">words written</div></div>
+    <div class="stat-item"><div class="stat-num">${habits.length}</div><div class="stat-label">active habits</div></div>
+    <div class="stat-item"><div class="stat-num">${totalCheckins}</div><div class="stat-label">total check-ins</div></div>
+  `;
+}
+
+renderStats();
+
+// Export
+document.getElementById('exportBtn').addEventListener('click', exportData);
+
+// Clear
+document.getElementById('clearHabitsBtn').addEventListener('click', () => {
+  if (!confirm('Remove all habits and check-in history? This cannot be undone.')) return;
+  localStorage.removeItem('habits');
+  localStorage.removeItem('checks');
+  toast('Habits cleared');
+  renderStats();
+});
+
+document.getElementById('clearAllBtn').addEventListener('click', () => {
+  if (!confirm('Delete ALL your data — journal, habits, tasks? This cannot be undone.')) return;
+  if (!confirm('Are you sure? This is permanent.')) return;
+  const keep = ['settings'];
+  Object.keys(localStorage).filter(k => !keep.includes(k)).forEach(k => localStorage.removeItem(k));
+  toast('All data cleared');
+  renderStats();
+});
+</script>
+</body>
+</html>

@@ -6,209 +6,59 @@
   <title>Journal — My Space</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg: #0c0c0c;
-      --surface: #141414;
-      --border: #222;
-      --muted: #444;
-      --text-dim: #888;
-      --text: #ccc;
-      --text-bright: #eee;
-      --accent: #a8c5a0;
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      font-size: 15px;
-      line-height: 1.6;
-      min-height: 100vh;
-    }
-
-    nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 32px;
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      background: var(--bg);
-      z-index: 10;
-    }
-
-    .nav-brand {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.1rem;
-      color: var(--text-bright);
-      text-decoration: none;
-    }
-
-    .nav-links { display: flex; gap: 24px; }
-    .nav-links a {
-      color: var(--text-dim);
-      text-decoration: none;
-      font-size: 0.85rem;
-      font-weight: 500;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      transition: color 0.2s;
-    }
-    .nav-links a:hover, .nav-links a.active { color: var(--text-bright); }
-
     .layout {
       display: grid;
-      grid-template-columns: 220px 1fr;
-      min-height: calc(100vh - 65px);
+      grid-template-columns: 240px 1fr;
+      min-height: calc(100vh - 57px);
     }
 
     /* Sidebar */
     .sidebar {
       border-right: 1px solid var(--border);
-      padding: 28px 0;
+      padding: 20px 0;
       overflow-y: auto;
       position: sticky;
-      top: 65px;
-      height: calc(100vh - 65px);
-    }
-
-    .sidebar-label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-dim);
-      padding: 0 20px;
-      margin-bottom: 12px;
-      font-weight: 500;
-    }
-
-    .entry-item {
-      padding: 12px 20px;
-      cursor: pointer;
-      border-left: 2px solid transparent;
-      transition: all 0.15s;
-    }
-
-    .entry-item:hover { background: var(--surface); }
-    .entry-item.active {
-      border-left-color: var(--accent);
-      background: var(--surface);
-    }
-
-    .entry-date {
-      font-size: 0.82rem;
-      color: var(--text);
-      font-weight: 500;
-    }
-
-    .entry-preview {
-      font-size: 0.75rem;
-      color: var(--text-dim);
-      margin-top: 3px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .no-entries {
-      padding: 20px;
-      color: var(--text-dim);
-      font-size: 0.85rem;
-    }
-
-    /* Editor */
-    .editor-area {
-      padding: 48px 56px 80px;
-      max-width: 700px;
-    }
-
-    .editor-date {
-      font-size: 0.75rem;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 12px;
-    }
-
-    .editor-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.7rem;
-      color: var(--text-bright);
-      margin-bottom: 32px;
-      font-weight: 400;
-      font-style: italic;
-    }
-
-    .word-count {
-      font-size: 0.72rem;
-      color: var(--text-dim);
-      margin-bottom: 16px;
-    }
-
-    textarea {
-      width: 100%;
-      background: transparent;
-      border: none;
-      outline: none;
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      font-size: 0.97rem;
-      line-height: 2;
-      resize: none;
-      min-height: 60vh;
-    }
-
-    textarea::placeholder { color: var(--muted); }
-
-    .editor-footer {
+      top: 57px;
+      height: calc(100vh - 57px);
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-top: 24px;
-      border-top: 1px solid var(--border);
-      margin-top: 24px;
+      flex-direction: column;
     }
 
-    .save-status {
-      font-size: 0.78rem;
-      color: var(--text-dim);
+    .sidebar-search {
+      margin: 0 12px 16px;
+      position: relative;
     }
 
-    .save-status.saved { color: var(--accent); }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 18px;
-      border-radius: 8px;
-      font-size: 0.82rem;
-      font-weight: 500;
-      cursor: pointer;
-      text-decoration: none;
-      transition: all 0.2s;
+    .sidebar-search input {
+      background: var(--surface);
       border: 1px solid var(--border);
-      background: transparent;
+      border-radius: 8px;
+      padding: 8px 12px 8px 32px;
       color: var(--text);
       font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      outline: none;
+      width: 100%;
+      transition: border-color 0.2s;
     }
 
-    .btn:hover { border-color: var(--muted); color: var(--text-bright); }
-    .btn-danger { color: #c08080; border-color: #3a2020; }
-    .btn-danger:hover { background: #3a2020; color: #e0a0a0; }
-    .btn-accent { border-color: var(--accent); color: var(--accent); }
-    .btn-accent:hover { background: var(--accent); color: #0c0c0c; }
+    .sidebar-search input:focus { border-color: var(--muted); }
+    .sidebar-search input::placeholder { color: var(--muted); }
+
+    .sidebar-search svg {
+      position: absolute;
+      left: 9px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
 
     .new-entry-btn {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 20px;
-      margin: 0 12px 20px;
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 16px;
+      margin: 0 12px 16px;
       border-radius: 8px;
       border: 1px dashed var(--muted);
       background: transparent;
@@ -217,94 +67,259 @@
       font-family: 'Inter', sans-serif;
       cursor: pointer;
       transition: all 0.2s;
-      width: calc(100% - 24px);
     }
 
     .new-entry-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-    .view-mode {
-      font-size: 0.97rem;
-      line-height: 2;
-      color: var(--text);
-      white-space: pre-wrap;
+    .sidebar-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-dim);
+      padding: 0 16px;
+      margin-bottom: 8px;
+      font-weight: 600;
     }
 
-    @media (max-width: 600px) {
+    .entry-list { flex: 1; overflow-y: auto; }
+
+    .entry-item {
+      padding: 11px 16px;
+      cursor: pointer;
+      border-left: 2px solid transparent;
+      transition: all 0.15s;
+    }
+
+    .entry-item:hover { background: var(--surface); }
+    .entry-item.active { border-left-color: var(--accent); background: var(--surface); }
+
+    .entry-item-top { display: flex; align-items: center; justify-content: space-between; }
+
+    .entry-date { font-size: 0.82rem; color: var(--text); font-weight: 500; }
+    .entry-mood-small { font-size: 0.9rem; }
+    .entry-preview { font-size: 0.73rem; color: var(--text-dim); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .no-entries { padding: 16px; color: var(--text-dim); font-size: 0.85rem; }
+
+    /* Editor */
+    .editor-area { padding: 44px 56px 80px; max-width: 680px; }
+
+    .editor-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+
+    .editor-date { font-size: 0.73rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; }
+
+    .editor-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem; color: var(--text-bright);
+      margin-bottom: 20px; font-weight: 400; font-style: italic;
+    }
+
+    /* Mood selector */
+    .mood-row {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .mood-label { font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; margin-right: 4px; }
+
+    .mood-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      line-height: 1;
+    }
+
+    .mood-btn:hover { border-color: var(--muted); transform: scale(1.1); }
+    .mood-btn.selected { border-color: var(--accent); background: var(--accent-dark); }
+
+    /* Toolbar */
+    .editor-toolbar {
+      display: flex; gap: 6px; align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .toolbar-btn {
+      background: none; border: 1px solid var(--border);
+      border-radius: 6px; padding: 5px 10px;
+      color: var(--text-dim); cursor: pointer;
+      font-size: 0.78rem; font-family: 'Inter', sans-serif;
+      transition: all 0.15s;
+    }
+
+    .toolbar-btn:hover { color: var(--text); border-color: var(--muted); background: var(--surface); }
+
+    .word-count { font-size: 0.72rem; color: var(--text-dim); margin-left: auto; }
+
+    textarea {
+      width: 100%; background: transparent;
+      border: none; outline: none;
+      color: var(--text); font-family: 'Inter', sans-serif;
+      font-size: 0.97rem; line-height: 2;
+      resize: none; min-height: 55vh;
+    }
+
+    textarea::placeholder { color: var(--muted); }
+
+    .editor-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 20px; border-top: 1px solid var(--border);
+      margin-top: 20px;
+    }
+
+    .save-status { font-size: 0.78rem; color: var(--text-dim); }
+    .save-status.saved { color: var(--accent); }
+
+    .shortcut-hint { font-size: 0.72rem; color: var(--text-dim); }
+
+    @media (max-width: 640px) {
       .layout { grid-template-columns: 1fr; }
       .sidebar { display: none; }
-      .editor-area { padding: 32px 20px 60px; }
+      .editor-area { padding: 28px 20px 80px; }
     }
   </style>
 </head>
 <body>
 
-<nav>
+<nav class="topnav">
   <a href="index.html" class="nav-brand">my space</a>
   <div class="nav-links">
-    <a href="index.html">home</a>
-    <a href="journal.html" class="active">journal</a>
-    <a href="habits.html">habits</a>
+    <a href="index.html">Home</a>
+    <a href="journal.html" class="active">Journal</a>
+    <a href="habits.html">Habits</a>
+    <a href="settings.html">Settings</a>
   </div>
+</nav>
+
+<nav class="bottom-nav">
+  <a href="index.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Home
+  </a>
+  <a href="journal.html" class="active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    Journal
+  </a>
+  <a href="habits.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+    Habits
+  </a>
+  <a href="settings.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    Settings
+  </a>
 </nav>
 
 <div class="layout">
   <aside class="sidebar">
-    <button class="new-entry-btn" id="newEntryBtn">+ new entry</button>
-    <div class="sidebar-label">past entries</div>
-    <div id="entryList"></div>
+    <button class="new-entry-btn" id="newEntryBtn">+ today's entry</button>
+
+    <div class="sidebar-search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="text" id="searchInput" placeholder="Search entries…">
+    </div>
+
+    <div class="sidebar-label">entries</div>
+    <div class="entry-list" id="entryList"></div>
   </aside>
 
   <div class="editor-area">
-    <div class="editor-date" id="editorDate"></div>
+    <div class="editor-top">
+      <div class="editor-date" id="editorDate"></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost btn-sm" id="deleteBtn" style="display:none">delete entry</button>
+      </div>
+    </div>
     <div class="editor-title" id="editorTitle"></div>
-    <div class="word-count" id="wordCount"></div>
-    <textarea id="journalText" placeholder="Start writing…"></textarea>
+
+    <div class="mood-row">
+      <span class="mood-label">mood</span>
+      <button class="mood-btn" data-mood="😊">😊</button>
+      <button class="mood-btn" data-mood="😌">😌</button>
+      <button class="mood-btn" data-mood="😐">😐</button>
+      <button class="mood-btn" data-mood="😔">😔</button>
+      <button class="mood-btn" data-mood="😤">😤</button>
+      <button class="mood-btn" data-mood="😴">😴</button>
+    </div>
+
+    <div class="editor-toolbar">
+      <button class="toolbar-btn" data-insert="**bold**" title="Bold">B</button>
+      <button class="toolbar-btn" data-insert="*italic*" title="Italic"><em>i</em></button>
+      <button class="toolbar-btn" data-insert="- ">• list</button>
+      <button class="toolbar-btn" id="dateStampBtn">📅 date</button>
+      <span class="word-count" id="wordCount"></span>
+    </div>
+
+    <textarea id="journalText" placeholder="Start writing… your words stay here."></textarea>
+
     <div class="editor-footer">
       <span class="save-status" id="saveStatus"></span>
-      <div style="display:flex;gap:10px">
-        <button class="btn btn-danger" id="deleteBtn" style="display:none">delete</button>
-      </div>
+      <span class="shortcut-hint">⌘ + Enter to save</span>
     </div>
   </div>
 </div>
 
+<script src="shared.js"></script>
 <script>
 const TODAY = new Date().toISOString().split('T')[0];
 let currentDate = TODAY;
 let saveTimer = null;
+let currentMood = null;
 
-const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 function getEntries() { return JSON.parse(localStorage.getItem('journalEntries') || '{}'); }
 function saveEntries(e) { localStorage.setItem('journalEntries', JSON.stringify(e)); }
 
+function getEntryText(entry) { return typeof entry === 'object' ? (entry.text || '') : (entry || ''); }
+function getEntryMood(entry) { return typeof entry === 'object' ? entry.mood : null; }
+
 function formatDate(iso) {
   const d = new Date(iso + 'T12:00:00');
-  return `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+  return `${DAYS[d.getDay()]}, ${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 }
 
 function formatShort(iso) {
   const d = new Date(iso + 'T12:00:00');
-  return `${months[d.getMonth()].slice(0,3)} ${d.getDate()}`;
+  return `${MONTHS[d.getMonth()].slice(0,3)} ${d.getDate()}`;
 }
 
-function renderSidebar() {
+function renderSidebar(filter = '') {
   const entries = getEntries();
   const list = document.getElementById('entryList');
-  const keys = Object.keys(entries).sort((a, b) => b.localeCompare(a));
+  let keys = Object.keys(entries).sort((a, b) => b.localeCompare(a));
+
+  if (filter) {
+    keys = keys.filter(k => getEntryText(entries[k]).toLowerCase().includes(filter.toLowerCase()));
+  }
 
   if (!keys.length) {
-    list.innerHTML = '<div class="no-entries">No past entries yet.</div>';
+    list.innerHTML = `<div class="no-entries">${filter ? 'No matches.' : 'No past entries yet.'}</div>`;
     return;
   }
 
-  list.innerHTML = keys.map(k => `
-    <div class="entry-item ${k === currentDate ? 'active' : ''}" data-date="${k}">
-      <div class="entry-date">${formatShort(k)}${k === TODAY ? ' · today' : ''}</div>
-      <div class="entry-preview">${entries[k].slice(0, 50) || '…'}</div>
-    </div>
-  `).join('');
+  list.innerHTML = keys.map(k => {
+    const entry = entries[k];
+    const text = getEntryText(entry);
+    const mood = getEntryMood(entry);
+    return `<div class="entry-item ${k === currentDate ? 'active' : ''}" data-date="${k}">
+      <div class="entry-item-top">
+        <div class="entry-date">${formatShort(k)}${k === TODAY ? ' · today' : ''}</div>
+        ${mood ? `<span class="entry-mood-small">${mood}</span>` : ''}
+      </div>
+      <div class="entry-preview">${text.slice(0, 55) || '…'}</div>
+    </div>`;
+  }).join('');
 
   list.querySelectorAll('.entry-item').forEach(el => {
     el.addEventListener('click', () => loadEntry(el.dataset.date));
@@ -314,20 +329,28 @@ function renderSidebar() {
 function loadEntry(date) {
   currentDate = date;
   const entries = getEntries();
-  const text = entries[date] || '';
+  const entry = entries[date];
+  const text = entry ? getEntryText(entry) : '';
+  const mood = entry ? getEntryMood(entry) : null;
   const ta = document.getElementById('journalText');
 
   document.getElementById('editorDate').textContent = formatDate(date);
   document.getElementById('editorTitle').textContent =
-    date === TODAY ? 'What's on your mind today?' : 'Entry';
+    date === TODAY ? "What's on your mind?" : 'Past entry';
   ta.value = text;
   updateWordCount(text);
+
+  // Mood
+  currentMood = mood;
+  document.querySelectorAll('.mood-btn').forEach(b => {
+    b.classList.toggle('selected', b.dataset.mood === mood);
+  });
+
   document.getElementById('saveStatus').textContent = '';
   document.getElementById('saveStatus').className = 'save-status';
   document.getElementById('deleteBtn').style.display = text ? 'inline-flex' : 'none';
-  ta.readOnly = false;
 
-  renderSidebar();
+  renderSidebar(document.getElementById('searchInput').value);
   ta.focus();
 }
 
@@ -336,31 +359,83 @@ function updateWordCount(text) {
   document.getElementById('wordCount').textContent = words ? `${words} word${words !== 1 ? 's' : ''}` : '';
 }
 
-// Auto-save
-document.getElementById('journalText').addEventListener('input', (e) => {
-  updateWordCount(e.target.value);
+function scheduleAutosave() {
   clearTimeout(saveTimer);
   document.getElementById('saveStatus').textContent = 'saving…';
   document.getElementById('saveStatus').className = 'save-status';
-  saveTimer = setTimeout(() => {
-    const entries = getEntries();
-    const val = e.target.value.trim();
-    if (val) {
-      entries[currentDate] = e.target.value;
-      document.getElementById('deleteBtn').style.display = 'inline-flex';
-    } else {
-      delete entries[currentDate];
-      document.getElementById('deleteBtn').style.display = 'none';
-    }
-    saveEntries(entries);
-    renderSidebar();
-    document.getElementById('saveStatus').textContent = 'saved';
-    document.getElementById('saveStatus').className = 'save-status saved';
-    setTimeout(() => {
-      if (document.getElementById('saveStatus').textContent === 'saved')
-        document.getElementById('saveStatus').textContent = '';
-    }, 2000);
-  }, 800);
+  saveTimer = setTimeout(doSave, 900);
+}
+
+function doSave() {
+  const ta = document.getElementById('journalText');
+  const val = ta.value.trim();
+  const entries = getEntries();
+  if (val || currentMood) {
+    entries[currentDate] = { text: ta.value, mood: currentMood };
+    document.getElementById('deleteBtn').style.display = 'inline-flex';
+  } else {
+    delete entries[currentDate];
+    document.getElementById('deleteBtn').style.display = 'none';
+  }
+  saveEntries(entries);
+  renderSidebar(document.getElementById('searchInput').value);
+  document.getElementById('saveStatus').textContent = 'saved';
+  document.getElementById('saveStatus').className = 'save-status saved';
+  setTimeout(() => {
+    if (document.getElementById('saveStatus').textContent === 'saved')
+      document.getElementById('saveStatus').textContent = '';
+  }, 2000);
+}
+
+document.getElementById('journalText').addEventListener('input', e => {
+  updateWordCount(e.target.value);
+  scheduleAutosave();
+});
+
+// Cmd/Ctrl+Enter to save immediately
+document.getElementById('journalText').addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+    clearTimeout(saveTimer);
+    doSave();
+    toast('Entry saved', 'success');
+  }
+});
+
+// Mood
+document.querySelectorAll('.mood-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const mood = btn.dataset.mood;
+    currentMood = currentMood === mood ? null : mood;
+    document.querySelectorAll('.mood-btn').forEach(b => b.classList.toggle('selected', b.dataset.mood === currentMood));
+    scheduleAutosave();
+  });
+});
+
+// Toolbar
+document.querySelectorAll('[data-insert]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const ta = document.getElementById('journalText');
+    const start = ta.selectionStart, end = ta.selectionEnd;
+    const insert = btn.dataset.insert;
+    ta.value = ta.value.slice(0, start) + insert + ta.value.slice(end);
+    ta.selectionStart = ta.selectionEnd = start + insert.length;
+    ta.focus();
+    scheduleAutosave();
+  });
+});
+
+document.getElementById('dateStampBtn').addEventListener('click', () => {
+  const ta = document.getElementById('journalText');
+  const stamp = new Date().toLocaleString();
+  const pos = ta.selectionStart;
+  ta.value = ta.value.slice(0, pos) + `\n[${stamp}]\n` + ta.value.slice(pos);
+  ta.focus();
+  scheduleAutosave();
+});
+
+// Search
+document.getElementById('searchInput').addEventListener('input', e => {
+  renderSidebar(e.target.value);
 });
 
 document.getElementById('newEntryBtn').addEventListener('click', () => loadEntry(TODAY));
@@ -370,11 +445,11 @@ document.getElementById('deleteBtn').addEventListener('click', () => {
   const entries = getEntries();
   delete entries[currentDate];
   saveEntries(entries);
+  toast('Entry deleted');
   renderSidebar();
   loadEntry(TODAY);
 });
 
-// Init
 loadEntry(TODAY);
 </script>
 </body>
